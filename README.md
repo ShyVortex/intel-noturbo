@@ -1,4 +1,4 @@
-# intel-turbo
+# intel-noturbo
 
 A simple Linux script to disable Intel Turbo Boost on systems using the `intel_pstate` frequency driver.
 
