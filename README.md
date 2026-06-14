@@ -22,25 +22,13 @@ If all outputs return `intel_pstate`, your system is compatible.
 
 ### Systemd-Based Systems
 
-1. Copy the `intel` folder to `/opt/`:
+1. Copy the `intel-noturbo.service` file to the systemd directory:
 
    ```bash
-   sudo cp -r intel /opt/
+   sudo cp etc/systemd/system/intel-noturbo.service /etc/systemd/system/
    ```
 
-2. Copy the `intel-noturbo.service` file to the systemd directory:
-
-   ```bash
-   sudo cp systemd/system/intel-noturbo.service /etc/systemd/system/
-   ```
-
-3. Ensure the script has execution permissions:
-
-   ```bash
-   sudo chmod +x /opt/intel/intel_noturbo.sh
-   ```
-
-4. To automatically disable Turbo Boost at startup:
+2. To automatically disable Turbo Boost at startup:
 
    ```bash
    sudo systemctl enable --now intel-noturbo.service
@@ -52,13 +40,13 @@ If all outputs return `intel_pstate`, your system is compatible.
    sudo systemctl start intel-noturbo.service
    ```
 
-5. Check the service status:
+3. Check the service status:
 
    ```bash
    sudo systemctl status intel-noturbo.service
    ```
 
-6. You can verify the Turbo Boost status at any time with:
+4. You can verify the Turbo Boost status at any time with:
 
    ```bash
    cat /sys/devices/system/cpu/intel_pstate/no_turbo
@@ -71,26 +59,20 @@ If all outputs return `intel_pstate`, your system is compatible.
 
 ### SysVinit-Based Systems
 
-1. Copy the `intel` folder to `/opt/`:
+1. Copy the init script to `/etc/init.d/`:
 
    ```bash
-   sudo cp -r intel /opt/
-   ```
-
-2. Copy the init script to `/etc/init.d/`:
-
-   ```bash
-   sudo cp sysvinit/intel_noturbo /etc/init.d/
+   sudo cp etc/init.d/intel_noturbo /etc/init.d/
    sudo chmod +x /etc/init.d/intel_noturbo
    ```
 
-3. Enable the script to run at boot:
+2. Enable the script to run at boot:
 
    ```bash
    sudo update-rc.d intel_noturbo defaults
    ```
 
-4. To disable Turbo Boost immediately without rebooting:
+3. To disable Turbo Boost immediately without rebooting:
 
    ```bash
    sudo /etc/init.d/intel_noturbo start
@@ -106,12 +88,12 @@ If all outputs return `intel_pstate`, your system is compatible.
 
 ## Manual or Alternative Startup Methods
 
-If your system uses **OpenRC**, **runit**, **s6**, or other init systems, you can still use the script manually or set it to run at startup via alternative methods.
+If your system uses **OpenRC**, **runit**, **s6**, or other init systems, you can still disable Turbo Boost manually or set it to run at startup via alternative methods.
 
 ### Manual Execution
 
 ```bash
-sudo /opt/intel/intel_noturbo.sh
+sudo sh -c 'echo 1 > /sys/devices/system/cpu/intel_pstate/no_turbo'
 ```
 
 ### Automatic Execution via Cron (Example)
@@ -142,16 +124,16 @@ sudo /opt/intel/intel_noturbo.sh
    crond -V
    ```
 
-3. Edit the crontab:
+3. Edit the root crontab:
 
    ```bash
-   crontab -e
+   sudo crontab -e
    ```
 
 4. Add the following line to disable Turbo Boost at startup:
 
-   ```bash
-   @reboot sh /opt/intel/intel_noturbo.sh
+   ```text
+   @reboot echo 1 > /sys/devices/system/cpu/intel_pstate/no_turbo
    ```
 
 ---
@@ -175,7 +157,6 @@ sudo /opt/intel/intel_noturbo.sh
 3. Remove installed files:
 
    ```bash
-   sudo rm -r /opt/intel/
    sudo rm /etc/systemd/system/intel-noturbo.service
    ```
 
@@ -194,7 +175,6 @@ sudo /opt/intel/intel_noturbo.sh
 2. Delete installed files:
 
    ```bash
-   sudo rm -r /opt/intel/
    sudo rm /etc/init.d/intel_noturbo
    ```
 
@@ -202,18 +182,12 @@ sudo /opt/intel/intel_noturbo.sh
 
 ---
 
-### Cron or Manual Installation
+### Cron Installation
 
-1. Remove the `@reboot` line from the crontab:
-
-   ```bash
-   crontab -e
-   ```
-
-2. Delete installed files:
+1. Remove the `@reboot` line from the root crontab:
 
    ```bash
-   sudo rm -r /opt/intel/
+   sudo crontab -e
    ```
 
 ---

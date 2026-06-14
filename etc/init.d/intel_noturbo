@@ -11,7 +11,7 @@
 case "$1" in
   start)
     echo "Disabling Intel Turbo Boost..."
-    /opt/intel/intel_noturbo.sh
+    echo "1" > /sys/devices/system/cpu/intel_pstate/no_turbo
     ;;
   stop)
     echo "Re-enabling Intel Turbo Boost..."
